@@ -1,0 +1,14 @@
+name: Linter
+
+on: push
+
+jobs:
+  lint:
+    name: Lint code base
+    runs-on: unbuntu-latest
+    steps:
+      - name: Checkout code
+        uses: github/super-linter@v3
+        env:
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
