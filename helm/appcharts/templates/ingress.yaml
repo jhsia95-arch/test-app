@@ -13,7 +13,7 @@
 #             backend:
 #               service:
 #                 name: fastapi
-#                 port:
+#                 port:#
 #                   number: 80
 
 apiVersion: networking.k8s.io/v1
