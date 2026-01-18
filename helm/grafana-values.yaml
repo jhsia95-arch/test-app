@@ -1,0 +1,17 @@
+grafana:
+  enabled: true
+  adminUser: admin
+  adminPassword: "kyiQiGrkAlKB3YcuVF5BejFOStwjbyyvntW000oa"
+  dashboards:
+    default:
+      k8s-pod-dashboard:
+        json: |
+          {
+            "annotations": {...},
+            "panels": [...],
+            "title": "K8s Pods Metrics"
+          }
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard

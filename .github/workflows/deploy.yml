@@ -37,7 +37,7 @@ jobs:
           region: ${{ env.AWS_REGION }}
           tags: latest,${{ github.run_number }}
           daemon_off: false
-          dockerfile: ./dockerfile
+          dockerfile: ./Dockerfile
           context: ./
       
   DeployToEKS:
@@ -63,6 +63,18 @@ jobs:
             --docker-server=${{ secrets.REGISTRY }} 
             --docker-username=AWS \
             --docker-password=${aws ecr get-login-password}
+      - name: Deploy monitoring stack
+        run: |
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo update
+
+          helm upgrade --install kube-prom prometheus-community/kube-prometheus-stack \
+            -n monitoring \
+            --create-namespace \
+            -f helm/grafana-values.yaml
+      - name: Deploy temp postgres
+        run: |
+          helm install helm/postgres
       - name: Deploy with Helm
         uses: bitovi/github-actions-deploy-eks-helm@1.2.12
         with:
@@ -74,6 +86,7 @@ jobs:
           namespace: default
           values: appimage=${{ secrets.REGISTRY }}/${{ env.ECR_REPO }},apptag=${{ github.run_number }}
           name: webapp
+
       - name: Get Pods
         run: kubectl get pods -A
       - name: Get Service
