@@ -15,3 +15,10 @@ grafana:
     dashboards:
       enabled: true
       label: grafana_dashboard 
+
+  ingress:
+    enabled: true
+    ingressClassName: alb
+
+    annotations:
+      kubernetes

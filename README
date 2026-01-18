@@ -52,3 +52,7 @@ minikube tunnel
   125  helm upgrade --install kube-prom prometheus-community/kube-prometheus-stack   -n monitoring -f helm/grafana-values.yaml
 
   133  kubectl port-forward -n monitoring svc/kube-prom-kube-prometheus-prometheus 9090:9090
+
+  curl -X POST "http://a2c91a36b89354fd5a5e47e630811581-e388d2b367862a23.elb.ap-southeast-1.amazonaws.com/items?name=test"
+curl -X POST "http://a2c91a36b89354fd5a5e47e630811581-e388d2b367862a23.elb.ap-southeast-1.amazonaws.com/webhook" -H "Content-Type: application/json" -d '{"event":"manual_test"}'
+
