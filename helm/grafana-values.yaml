@@ -1,16 +1,101 @@
 grafana:
   enabled: true
-  adminUser: admin
-  adminPassword: "kyiQiGrkAlKB3YcuVF5BejFOStwjbyyvntW000oa"
+  # adminUser: admin
+  # adminPassword: "kyiQiGrkAlKB3YcuVF5BejFOStwjbyyvntW000oa"
+  # dashboards:
+  #   default:
+  #     k8s-pod-dashboard:
+  #       json: |
+  #         {
+  #           "annotations": {...},
+  #           "panels": [...],
+  #           "title": "K8s Pods Metrics"
+  #         }
+  grafana:
+  enabled: true
+
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      folder: Kubernetes
+
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - grafana.dashboard.com
+    path: /
+    pathType: Prefix
+
   dashboards:
     default:
-      k8s-pod-dashboard:
+      app-observability:
         json: |
           {
-            "annotations": {...},
-            "panels": [...],
-            "title": "K8s Pods Metrics"
+            "uid": "app-observability",
+            "title": "Application & Kubernetes Observability",
+            "timezone": "browser",
+            "schemaVersion": 38,
+            "version": 1,
+            "refresh": "10s",
+            "panels": [
+
+              {
+                "type": "timeseries",
+                "title": "Pod CPU Usage",
+                "datasource": "Prometheus",
+                "targets": [
+                  {
+                    "expr": "sum(rate(container_cpu_usage_seconds_total{container!=\"\"}[5m])) by (pod)",
+                    "legendFormat": "{{pod}}"
+                  }
+                ],
+                "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 }
+              },
+
+              {
+                "type": "timeseries",
+                "title": "Pod Memory Usage",
+                "datasource": "Prometheus",
+                "targets": [
+                  {
+                    "expr": "sum(container_memory_working_set_bytes{container!=\"\"}) by (pod)",
+                    "legendFormat": "{{pod}}"
+                  }
+                ],
+                "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 }
+              },
+
+              {
+                "type": "timeseries",
+                "title": "API Request Rate",
+                "datasource": "Prometheus",
+                "targets": [
+                  {
+                    "expr": "sum(rate(http_requests_total[5m])) by (method, path)",
+                    "legendFormat": "{{method}} {{path}}"
+                  }
+                ],
+                "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 }
+              },
+
+              {
+                "type": "timeseries",
+                "title": "API Latency (p95)",
+                "datasource": "Prometheus",
+                "targets": [
+                  {
+                    "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))",
+                    "legendFormat": "p95 latency"
+                  }
+                ],
+                "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 }
+              }
+
+            ]
           }
+
   sidecar:
     dashboards:
       enabled: true
