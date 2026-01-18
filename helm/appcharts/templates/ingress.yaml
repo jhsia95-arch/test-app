@@ -7,7 +7,7 @@
 #   rules:
 #     - host: api.local
 #       http:
-#         paths:
+#         paths:#
 #           - path: /
 #             pathType: Prefix
 #             backend:
