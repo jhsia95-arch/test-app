@@ -61,7 +61,8 @@ jobs:
           kubectl create secret docker-registry regcred \
             --docker-server=${{ secrets.REGISTRY }} 
             --docker-username=AWS \
-            --docker-password=${aws ecr get-login-password}
+            --docker-password=$(aws ecr get-login-password)
+
       - name: Deploy monitoring stack
         run: |
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts

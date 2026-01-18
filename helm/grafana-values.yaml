@@ -14,4 +14,4 @@ grafana:
   sidecar:
     dashboards:
       enabled: true
-      label: grafana_dashboard
+      label: grafana_dashboard #
