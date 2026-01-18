@@ -64,9 +64,9 @@ jobs:
             --docker-password=$(aws ecr get-login-password)
 
 
-      - name: Deploy temp postgres
-        run: |
-          helm install db helm/postgres
+      # - name: Deploy temp postgres
+      #   run: |
+      #     helm install db helm/postgres
 
       - name: Deploy with Helm
         uses: bitovi/github-actions-deploy-eks-helm@v1.2.12
