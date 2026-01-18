@@ -56,3 +56,6 @@ minikube tunnel
   curl -X POST "http://a2c91a36b89354fd5a5e47e630811581-e388d2b367862a23.elb.ap-southeast-1.amazonaws.com/items?name=test"
 curl -X POST "http://a2c91a36b89354fd5a5e47e630811581-e388d2b367862a23.elb.ap-southeast-1.amazonaws.com/webhook" -H "Content-Type: application/json" -d '{"event":"manual_test"}'
 
+Get IP of NLB then edit host file to map ip to grafana.dashboard.com 
+Go to browser and enter http:///grafana.dashboard.com
+

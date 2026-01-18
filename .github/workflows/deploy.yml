@@ -93,4 +93,18 @@ jobs:
       - name: Get Service
         run: kubectl get svc 
       - name: Get Grafana password
-        run: kubectl --namespace monitoring get secrets kube-prom-grafana -o jsonpath="{.data.admin-password}" | base64 -d ; echo     
+        run: kubectl --namespace monitoring get secrets kube-prom-grafana -o jsonpath="{.data.admin-password}" | base64 -d ; echo  
+      - name: Get IP of Network Load balancer
+        run: aws elbv2 describe-load-balancers \
+  --query "LoadBalancers[?contains(LoadBalancerArn, 'net')].LoadBalancerArn" \
+  --output text | tr '\t' '\n' | while read arn; do
+    aws elbv2 describe-tags \
+      --resource-arns "$arn" \
+      --query "TagDescriptions[0].Tags[?Key=='kubernetes.io/service-name'].Value" \
+      --output text | grep ingress && \
+    aws elbv2 describe-load-balancers \
+      --load-balancer-arns "$arn" \
+      --query 'LoadBalancers[0].DNSName' \
+      --output text
+  done | xargs -n1 getent hosts | awk '{print $1}'
+           
