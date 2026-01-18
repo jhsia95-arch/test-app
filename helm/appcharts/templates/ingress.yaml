@@ -21,11 +21,12 @@ kind: Ingress
 metadata:
   name: fastapi-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    # nginx.ingress.kubernetes.io/rewrite-target: / ## removed
 spec:
+  ingressClassName: nginx ## added
   rules:
-    - host: api.local
-      http:
+    # - host: api.local ## removed
+    -  http:
         paths:
           - path: /
             pathType: Prefix
