@@ -18,16 +18,13 @@ grafana:
 
   ingress:
     enabled: true
-    ingressClassName: alb
-
-    annotations:
-      kubernetes.io/ingress.class: alb
-      alb.ingress.kubernetes.io/scheme: internet-facing
-      alb.ingress.kubernetes.io/target-type: ip
-      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+    ingressClassName: nginx
 
     hosts:
-      - grafana.example.com
+      - grafana.com
 
-    paths:
-      - /
+    path: /
+    pathType: Prefix
+
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /
