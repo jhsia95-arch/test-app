@@ -21,7 +21,7 @@ grafana:
     ingressClassName: nginx
 
     hosts:
-      - grafana.com
+      - grafana.dashboard.com
 
     path: /
     pathType: Prefix
