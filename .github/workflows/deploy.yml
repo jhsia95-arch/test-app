@@ -1,0 +1,80 @@
+# Workflow Name
+name: "deploy-app"
+
+# Workflow Triggers
+on:
+  push:
+    branches:
+      - main
+
+# Environment Variables
+env:
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  EKS_CLUSTER: ${{ vars.EKS_CLUSTER }}
+  ECR_REPO: ${{ vars.ECR_REPO }}
+
+  # AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+
+# Define Jobs
+jobs:
+  BuildImageAndPush:
+    name: "BuildImageAndPush to EKS"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Build and Upload image to ECR
+        uses: appleboy/docker-ecr-action@master
+        with:
+          access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          registry: ${{ secrets.REGISTRY }}
+          repo: ${{ env.ECR_REPO}}
+          region: ${{ env.AWS_REGION }}
+          tags: latest,${{ github.run_number }}
+          daemon_off: false
+          dockerfile: ./dockerfile
+          context: ./
+      
+  DeployToEKS:
+    needs: BuildImageAndPush
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Get Kubernetes config
+        id: getconfig
+        run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER }} --region ${{ env.AWS_REGION }} 
+      - name: Login to ECR
+        run: |
+          kubectl get secret regcred || \
+          kubectl create secret docker-registry regcred \
+            --docker-server=${{ secrets.REGISTRY }} 
+            --docker-username=AWS \
+            --docker-password=${aws ecr get-login-password}
+      - name: Deploy with Helm
+        uses: bitovi/github-actions-deploy-eks-helm@1.2.12
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+          cluster-name: ${{ env.EKS_CLUSTER }}
+          chart-path: helm/appcharts
+          namespace: default
+          values: appimage=${{ secrets.REGISTRY }}/${{ env.ECR_REPO }},apptag=${{ github.run_number }}
+          name: webapp
+      - name: Get Pods
+        run: kubectl get pods -A
+      - name: Get Service
+        run: kubectl get svc 
