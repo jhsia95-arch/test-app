@@ -25,7 +25,9 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-
+      - name: Run tests
+        run: |
+          pytest tests/
       - name: Build and Upload image to ECR
         uses: appleboy/docker-ecr-action@master
         with:

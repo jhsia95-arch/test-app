@@ -68,3 +68,4 @@ async def webhook_receiver(request: Request):
     data = await request.json()
     print("Webhook received:", data)
     return {"status": "received"}
+
