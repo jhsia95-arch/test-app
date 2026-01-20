@@ -36,6 +36,7 @@ jobs:
           pip install -r requirements.txt        
       - name: Run tests
         run: |
+          echo "DATABASE_URL=sqlite:///./test.db" >> $GITHUB_ENV
           export PYTHONPATH=$PYTHONPATH:$(pwd)
           python -m pytest tests/
       - name: Build and Upload image to ECR

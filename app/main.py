@@ -31,10 +31,14 @@ from app.database import SessionLocal, engine, Base
 from app.models import Item
 import httpx
 
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+@app.on_event("startup")
+def startup():
+    Base.metadata.create_all(bind=engine)
+    
 # Dependency to get DB session
 def get_db():
     db = SessionLocal()
