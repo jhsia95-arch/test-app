@@ -25,8 +25,10 @@
 
 from fastapi import FastAPI, Request, Depends
 from sqlalchemy.orm import Session
-from database import SessionLocal, engine, Base
-from models import Item
+# from database import SessionLocal, engine, Base
+# from models import Item
+from app.database import SessionLocal, engine, Base
+from app.models import Item
 import httpx
 
 Base.metadata.create_all(bind=engine)
