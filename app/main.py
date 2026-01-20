@@ -30,7 +30,7 @@ from sqlalchemy.orm import Session
 from app.database import SessionLocal, engine, Base
 from app.models import Item
 import httpx
-
+from fastapi import HTTPException
 # Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -38,7 +38,7 @@ app = FastAPI()
 @app.on_event("startup")
 def startup():
     Base.metadata.create_all(bind=engine)
-    
+
 # Dependency to get DB session
 def get_db():
     db = SessionLocal()
@@ -67,6 +67,28 @@ def create_item(name: str, db: Session = Depends(get_db)):
 @app.get("/items")
 def read_items(db: Session = Depends(get_db)):
     return db.query(Item).all()
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+@app.delete("/items/{item_id}")
+def delete_item(item_id: int, db: Session = Depends(get_db)):
+    item = db.query(Item).filter(Item.id == item_id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    db.delete(item)
+    db.commit()
+    return {"status": "deleted"}
+
+@app.put("/items/{item_id}")
+def update_item(item_id: int, name: str, db: Session = Depends(get_db)):
+    item = db.query(Item).filter(Item.id == item_id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    item.name = name
+    db.commit()
+    db.refresh(item)
+    return {"id": item.id, "name": item.name}
 
 # Webhook endpoint
 @app.post("/webhook")
