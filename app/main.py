@@ -32,12 +32,20 @@ from app.models import Item
 import httpx
 from fastapi import HTTPException
 # Base.metadata.create_all(bind=engine)
+from contextlib import asynccontextmanager
 
-app = FastAPI()
-
-@app.on_event("startup")
-def startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
+    yield
+
+app = FastAPI(lifespan=lifespan)
+
+# app = FastAPI()
+
+# @app.on_event("startup")
+# def startup():
+#     Base.metadata.create_all(bind=engine)
 
 # Dependency to get DB session
 def get_db():

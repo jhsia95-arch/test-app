@@ -7,7 +7,8 @@
 # SessionLocal = sessionmaker(bind=engine)
 import os
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # DATABASE_URL = "postgresql://dbadmin:V9%21rQ2%23Lx814124@postgres:5432/postgres"
