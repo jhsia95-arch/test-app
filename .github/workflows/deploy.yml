@@ -99,6 +99,8 @@ jobs:
           name: webapp
       - name: Deploy monitoring stack
         run: |
+
+          kubectl apply -f helm/grafana-configmap.yaml         
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm repo update
 
@@ -106,6 +108,7 @@ jobs:
             -n monitoring \
             --create-namespace \
             -f helm/grafana-values.yaml
+          kubectl apply -f helm/service-monitor.yaml
       - name: Get Pods
         run: kubectl get pods -A
       - name: Get Service

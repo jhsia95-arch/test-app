@@ -2,105 +2,82 @@ grafana:
   enabled: true
   # adminUser: admin
   # adminPassword: "kyiQiGrkAlKB3YcuVF5BejFOStwjbyyvntW000oa"
-  # dashboards:
-  #   default:
-  #     k8s-pod-dashboard:
-  #       json: |
-  #         {
-  #           "annotations": {...},
-  #           "panels": [...],
-  #           "title": "K8s Pods Metrics"
-  #         }
-  grafana:
-  enabled: true
-
+  defaultDashboardsEnabled: false  
   sidecar:
     dashboards:
       enabled: true
       label: grafana_dashboard
-      folder: Kubernetes
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          access: proxy
+          url: http://kube-prom-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+          isDefault: true
+          uid: prometheus
+          version: 1
+          editable: false       
+additionalPrometheusRulesMap:
+  fastapi-rules:
+    groups:
+      - name: fastapi.rules
+        rules:
+        - alert: FastAPIHighErrorRate
+          expr: |
+            sum(rate(http_requests_total{
+              status=~"4xx|5xx",
+              handler!="/metrics"
+            }[5m]))
+            /
+            sum(rate(http_requests_total{
+              handler!="/metrics"
+            }[5m]))
+            > 0.05
+          for: 5m
+          labels:
+            severity: warning
+        # CPU usage > 80%
+        - alert: HighCPUUsage
+          expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "CPU usage is above 80% for 5 minutes"
+            description: "Instance {{ $labels.instance }} CPU is at {{ $value }}%"
 
-  ingress:
-    enabled: true
-    ingressClassName: nginx
-    hosts:
-      - grafana.dashboard.com
-    path: /
-    pathType: Prefix
+        # Memory usage > 80%
+        - alert: HighMemoryUsage
+          expr: 100 * (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) > 80
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Memory usage is above 80% for 5 minutes"
+            description: "Instance {{ $labels.instance }} memory usage is at {{ $value }}%"
 
-  dashboards:
-    default:
-      app-observability:
-        json: |
-          {
-            "uid": "app-observability",
-            "title": "Application & Kubernetes Observability",
-            "timezone": "browser",
-            "schemaVersion": 38,
-            "version": 1,
-            "refresh": "10s",
-            "panels": [
+        # Disk usage > 80%
+        - alert: HighDiskUsage
+          expr: 100 * (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|rootfs"} / node_filesystem_size_bytes{fstype!~"tmpfs|rootfs"})) > 80
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Disk usage is above 80% for 1 minute"
+            description: "Instance {{ $labels.instance }} disk usage is at {{ $value }}%"
+        - alert: FastAPIHighLatency
+          expr: histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket[5m])) by (le)) > 1
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High API latency on FastAPI"
+            description: "99th percentile latency is above 1s for 5 minutes on instance {{ $labels.instance }}."
 
-              {
-                "type": "timeseries",
-                "title": "Pod CPU Usage",
-                "datasource": "Prometheus",
-                "targets": [
-                  {
-                    "expr": "sum(rate(container_cpu_usage_seconds_total{container!=\"\"}[5m])) by (pod)",
-                    "legendFormat": "{{pod}}"
-                  }
-                ],
-                "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 }
-              },
 
-              {
-                "type": "timeseries",
-                "title": "Pod Memory Usage",
-                "datasource": "Prometheus",
-                "targets": [
-                  {
-                    "expr": "sum(container_memory_working_set_bytes{container!=\"\"}) by (pod)",
-                    "legendFormat": "{{pod}}"
-                  }
-                ],
-                "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 }
-              },
-
-              {
-                "type": "timeseries",
-                "title": "API Request Rate",
-                "datasource": "Prometheus",
-                "targets": [
-                  {
-                    "expr": "sum(rate(http_requests_total[5m])) by (method, path)",
-                    "legendFormat": "{{method}} {{path}}"
-                  }
-                ],
-                "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 }
-              },
-
-              {
-                "type": "timeseries",
-                "title": "API Latency (p95)",
-                "datasource": "Prometheus",
-                "targets": [
-                  {
-                    "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))",
-                    "legendFormat": "p95 latency"
-                  }
-                ],
-                "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 }
-              }
-
-            ]
-          }
-
-  sidecar:
-    dashboards:
-      enabled: true
-      label: grafana_dashboard 
-
+##
   ingress:
     enabled: true
     ingressClassName: nginx
