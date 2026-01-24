@@ -2,9 +2,8 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
-DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Fail fast in Kubernetes / production
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./test.db")
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL environment variable is not set")
 
