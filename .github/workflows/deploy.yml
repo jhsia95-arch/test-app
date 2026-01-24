@@ -97,6 +97,8 @@ jobs:
           namespace: default
           values: appimage=${{ secrets.REGISTRY }}/${{ env.ECR_REPO }},apptag=${{ github.run_number }}
           name: webapp
+      - name: Create monitoring namespace
+        run: kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f -
       - name: Deploy monitoring stack
         run: |
 
@@ -105,8 +107,6 @@ jobs:
           helm repo update
 
           helm upgrade --install kube-prom prometheus-community/kube-prometheus-stack \
-            -n monitoring \
-            --create-namespace \
             -f helm/grafana-values.yaml
           kubectl apply -f helm/service-monitor.yaml
       - name: Get Pods
