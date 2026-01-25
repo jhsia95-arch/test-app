@@ -53,7 +53,9 @@ minikube tunnel
 
   133  kubectl port-forward -n monitoring svc/kube-prom-kube-prometheus-prometheus 9090:9090
 
-  curl -X POST "http://ae7c625f9f95b4ca788fe6569b541693-3e5a630c6d7cf791.elb.ap-southeast-1.amazonaws.com/items?name=test"
+curl -X POST "http://ae7c625f9f95b4ca788fe6569b541693-3e5a630c6d7cf791.elb.ap-southeast-1.amazonaws.com/items?name=test"
+curl -X GET "http://ae7c625f9f95b4ca788fe6569b541693-3e5a630c6d7cf791.elb.ap-southeast-1.amazonaws.com/items"
+
 curl -X POST "http://a2c91a36b89354fd5a5e47e630811581-e388d2b367862a23.elb.ap-southeast-1.amazonaws.com/webhook" -H "Content-Type: application/json" -d '{"event":"manual_test"}'
 
 Get IP of NLB then edit host file to map ip to grafana.dashboard.com 
