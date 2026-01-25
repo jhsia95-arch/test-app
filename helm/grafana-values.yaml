@@ -7,7 +7,7 @@ grafana:
     dashboards:
       enabled: true
       label: grafana_dashboard
-  # datasources: #
+  # datasources: ##
   #   datasources.yaml:
   #     apiVersion: 1
   #     datasources:
