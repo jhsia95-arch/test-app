@@ -1,7 +1,7 @@
 grafana:
   enabled: true
   # adminUser: admin
-  # adminPassword: "kyiQiGrkAlKB3YcuVF5BejFOStwjbyyvntW000oa"
+  # adminPassword: "kyiQiGrkAlKB3YcuVF5BejFOStwjbyyvntW000oa"#
   defaultDashboardsEnabled: false  
   sidecar:
     dashboards:
