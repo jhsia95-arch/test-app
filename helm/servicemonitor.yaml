@@ -12,7 +12,7 @@
 #   endpoints:
 #   - port: web
 #     path: /metrics
-#     interval: 15s
+#     interval: 15s #
 
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
