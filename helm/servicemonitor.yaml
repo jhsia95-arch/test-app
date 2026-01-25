@@ -26,7 +26,7 @@ spec:
     matchLabels:
       app: fastapi
   endpoints:
-    - port: http        # Must match Service port name
+    - port: http        # Must match Service port name #
       path: /metrics
       interval: 15s
   namespaceSelector:
