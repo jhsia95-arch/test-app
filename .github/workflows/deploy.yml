@@ -109,7 +109,7 @@ jobs:
           helm upgrade --install kube-prom prometheus-community/kube-prometheus-stack \
             -n monitoring \
             -f helm/grafana-values.yaml
-          kubectl apply -f helm/service-monitor.yaml
+          kubectl apply -f service-monitor.yaml
       - name: Get Pods
         run: kubectl get pods -A
       - name: Get Service
