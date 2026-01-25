@@ -66,7 +66,7 @@ def create_item(name: str, db: Session = Depends(get_db)):
     # Trigger webhook callback
     try:
         # Replace with real URL if testing externally
-        httpx.post("https://webhook.site/#!/view/30cc039a-3e58-4e74-83f9-4860406ff233/a71f7c13-2ea3-4f2e-97cc-57832be70f05/1", json={"event": "item_created", "item": item.name, "id": item.id})
+        httpx.post("https://webhook.site/30cc039a-3e58-4e74-83f9-4860406ff233", json={"event": "item_created", "item": item.name, "id": item.id})
     except Exception as e:
         print("Webhook failed:", e)
 
