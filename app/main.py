@@ -33,6 +33,7 @@ import httpx
 from fastapi import HTTPException
 # Base.metadata.create_all(bind=engine)
 from contextlib import asynccontextmanager
+from prometheus_fastapi_instrumentator import Instrumentator
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -105,3 +106,4 @@ async def webhook_receiver(request: Request):
     print("Webhook received:", data)
     return {"status": "received"}
 
+Instrumentator().instrument(app).expose(app)

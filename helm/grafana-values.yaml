@@ -1,5 +1,18 @@
 grafana:
   enabled: true
+##
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+
+    hosts:
+      - grafana.dashboard.com
+
+    path: /
+    pathType: Prefix
+
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /  
   # adminUser: admin
   # adminPassword: "kyiQiGrkAlKB3YcuVF5BejFOStwjbyyvntW000oa"#
   defaultDashboardsEnabled: false  
@@ -77,16 +90,3 @@ additionalPrometheusRulesMap:
             description: "99th percentile latency is above 1s for 5 minutes on instance {{ $labels.instance }}."
 
 
-##
-  ingress:
-    enabled: true
-    ingressClassName: nginx
-
-    hosts:
-      - grafana.dashboard.com
-
-    path: /
-    pathType: Prefix
-
-    annotations:
-      nginx.ingress.kubernetes.io/rewrite-target: /
