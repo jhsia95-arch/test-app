@@ -108,8 +108,6 @@ jobs:
 
           helm upgrade --install kube-prom prometheus-community/kube-prometheus-stack \
             -n monitoring \
-            --wait \
-            --timeout 15m \
             -f helm/grafana-values.yaml
           kubectl apply -f helm/service-monitor.yaml
       - name: Get Pods

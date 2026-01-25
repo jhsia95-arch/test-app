@@ -7,18 +7,18 @@ grafana:
     dashboards:
       enabled: true
       label: grafana_dashboard
-  datasources:
-    datasources.yaml:
-      apiVersion: 1
-      datasources:
-        - name: Prometheus
-          type: prometheus
-          access: proxy
-          url: http://kube-prom-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
-          isDefault: true
-          uid: prometheus
-          version: 1
-          editable: false       
+  # datasources:
+  #   datasources.yaml:
+  #     apiVersion: 1
+  #     datasources:
+  #       - name: Prometheus
+  #         type: prometheus
+  #         access: proxy
+  #         url: http://kube-prom-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+  #         isDefault: true
+  #         uid: prometheus
+  #         version: 1
+  #         editable: false       
 additionalPrometheusRulesMap:
   fastapi-rules:
     groups:
