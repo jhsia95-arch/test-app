@@ -35,7 +35,7 @@ def create_item(name: str, db: Session = Depends(get_db)):
     # Trigger webhook callback
     try:
         # Replace with real URL if testing externally
-        httpx.post("https://webhook.site/30cc039a-3e58-4e74-83f9-4860406ff233", json={"event": "item_created", "item": item.name, "id": item.id})
+        httpx.post("https://webhook.site/ebfb63af-9a95-4c79-9560-18ad320f08be", json={"event": "item_created", "item": item.name, "id": item.id})
     except Exception as e:
         print("Webhook failed:", e)
 
@@ -65,6 +65,13 @@ def update_item(item_id: int, name: str, db: Session = Depends(get_db)):
     item.name = name
     db.commit()
     db.refresh(item)
+    # Trigger webhook callback
+    try:
+        # Replace with real URL if testing externally
+        httpx.post("https://webhook.site/ebfb63af-9a95-4c79-9560-18ad320f08be", json={"event": "item_updated", "item": item.name, "id": item.id})
+    except Exception as e:
+        print("Webhook failed:", e)
+
     return {"id": item.id, "name": item.name} 
 
 

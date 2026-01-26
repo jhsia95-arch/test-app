@@ -29,7 +29,7 @@ Triggering the pipeline will deploy the fastapi application and monitoring into 
 # Test app
 From AWS console or kubectl get ingress to see the DNS name of the load balancer
 
-Open a browser and go to this link to monitor webhook updates https://webhook.site/#!/view/30cc039a-3e58-4e74-83f9-4860406ff233/a71f7c13-2ea3-4f2e-97cc-57832be70f05/1
+Open a browser and go to this link to monitor webhook updates https://webhook.site/#!/view/ebfb63af-9a95-4c79-9560-18ad320f08be/445dad5d-94bb-41b8-b3ba-0f229e8a64ee/1
 
 ## API calls
 curl -X POST "http://<Load balancer DNS>/items?name=test"
