@@ -65,7 +65,6 @@ def update_item(item_id: int, name: str, db: Session = Depends(get_db)):
     item.name = name
     db.commit()
     db.refresh(item)
-    return {"id": item.id, "name": item.name}
     # Trigger webhook callback
     try:
         # Replace with real URL if testing externally
@@ -73,7 +72,8 @@ def update_item(item_id: int, name: str, db: Session = Depends(get_db)):
     except Exception as e:
         print("Webhook failed:", e)
 
-    return {"id": item.id, "name": item.name}
+    return {"id": item.id, "name": item.name} 
+
 
 # Webhook endpoint
 @app.post("/webhook")
